@@ -41,10 +41,10 @@ Regex.scan(mul_reg, input, return: :index)
     |> Enum.filter(fn {x,_} ->
       !(illegal |> Enum.any?(fn {z,k} -> x > z && x < k end))
     end)
+    |> Enum.drop(1)
     |> Enum.map(fn {x,y} ->
       String.slice(input, x..(x+y-1))
      end)
-    |> Enum.drop(1)
     |> Enum.map(&(String.to_integer(&1)))
 
     if (Enum.empty?(list2)) do
