@@ -20,7 +20,24 @@ end)
 
 updates
   |> String.split("\n")
-  #|> IO.inspect()
+  |> Enum.map(fn s -> s |> String.split(",") |> Enum.map(&(String.to_integer(&1))) end)
+  |> Enum.filter(fn row ->
+    indexedRow = row |> Enum.sort(fn a, b ->
+      if (MapSet.member?(ruleOrders, {b,a})) do
+        false
+      else
+        true
+      end
+    end)
+
+    indexedRow == row
+  end)
+  |> Enum.map(fn x -> Enum.at(x, floor(Enum.count(x)/2)) end)
+  |> Enum.sum()
+  |> IO.inspect()
+
+updates
+  |> String.split("\n")
   |> Enum.map(fn s -> s |> String.split(",") |> Enum.map(&(String.to_integer(&1))) end)
   |> Enum.filter(fn row ->
     indexedRow = row |> Enum.sort(fn a, b ->
@@ -42,9 +59,7 @@ updates
       end
     end)
   end)
-  #|> IO.inspect()
   |> Enum.map(fn x -> Enum.at(x, floor(Enum.count(x)/2)) end)
-  #|> IO.inspect()
   |> Enum.sum()
   |> IO.inspect()
 
