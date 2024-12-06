@@ -18,10 +18,7 @@ defmodule Funcs do
       end
 
       {n_dir, n_pos} = case {MapSet.member?(obstructions, n_pos), direction} do
-        {false, :up} -> {direction, {guard_x, guard_y-1}}
-        {false, :down} -> {direction, {guard_x, guard_y+1}}
-        {false, :right} -> {direction, {guard_x+1, guard_y}}
-        {false, :left} -> {direction, {guard_x-1, guard_y}}
+        {false, _} -> {direction, n_pos}
         {true, :up} -> {:right, {guard_x, guard_y}}
         {true, :right} -> {:down, {guard_x, guard_y}}
         {true, :down} -> {:left, {guard_x, guard_y}}
@@ -56,22 +53,37 @@ end)
 max_x = obstructions |> Enum.map(&(elem(&1, 0))) |> Enum.max()
 max_y = obstructions |> Enum.map(&(elem(&1, 1))) |> Enum.max()
 
-{acc, visits} = Funcs.traverse(guard_pos, obstructions, :up, %MapSet{}, max_x, max_y)
+{acc, _} = Funcs.traverse(guard_pos, obstructions, :up, %MapSet{}, max_x, max_y)
 
 visited_points = acc
 |> Enum.map(&(elem(&1, 0)))
 |> Enum.uniq()
 
 #part1
-visited_points |> Enum.count() |> IO.inspect()
+point_count = visited_points |> Enum.count()
+
+IO.inspect(point_count)
 
 #part2
 visited_points
 |> Enum.filter(&(guard_pos != &1))
-|> Enum.count(fn point ->
-  {_, status} = Funcs.traverse(guard_pos, obstructions |> MapSet.put(point), :up, %MapSet{}, max_x, max_y)
-  status == :loop
+|> Enum.chunk_every(ceil(point_count/8))
+|> Enum.map(fn points ->
+  Task.async(fn ->
+    points
+    |> Enum.map(fn point ->
+      {_, status} = Funcs.traverse(guard_pos, MapSet.put(obstructions, point), :up, %MapSet{}, max_x, max_y)
+      status
+    end)
+  end)
 end)
+|> Enum.map(fn t ->
+  Task.await(t, :infinity)
+  |> Enum.count(fn status ->
+    status == :loop
+  end)
+end)
+|> Enum.sum()
 |> IO.inspect()
 
 
