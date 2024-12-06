@@ -56,25 +56,22 @@ end)
 max_x = obstructions |> Enum.map(&(elem(&1, 0))) |> Enum.max()
 max_y = obstructions |> Enum.map(&(elem(&1, 1))) |> Enum.max()
 
-{acc, _} = Funcs.traverse(guard_pos, obstructions, :up, %MapSet{}, max_x, max_y)
+{acc, visits} = Funcs.traverse(guard_pos, obstructions, :up, %MapSet{}, max_x, max_y)
 
-acc
+visited_points = acc
 |> Enum.map(&(elem(&1, 0)))
 |> Enum.uniq()
-|> Enum.count()
-|> IO.inspect()
 
-0..max_y
-|> Enum.map(fn y ->
-  0..max_x
-    |> Enum.filter(&(!MapSet.member?(obstructions, {&1, y})))
-    |> Enum.filter(&(guard_pos != {&1, y}))
-    |> Enum.count(fn x ->
-      {_, status} = Funcs.traverse(guard_pos, obstructions |> MapSet.put({x,y}), :up, %MapSet{}, max_x, max_y)
-      status == :loop
-    end)
+#part1
+visited_points |> Enum.count() |> IO.inspect()
+
+#part2
+visited_points
+|> Enum.filter(&(guard_pos != &1))
+|> Enum.count(fn point ->
+  {_, status} = Funcs.traverse(guard_pos, obstructions |> MapSet.put(point), :up, %MapSet{}, max_x, max_y)
+  status == :loop
 end)
-|> Enum.sum()
 |> IO.inspect()
 
 
