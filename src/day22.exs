@@ -54,19 +54,19 @@ end)
 secret_numbers
 |> Enum.reduce(Map.new(), fn n, acc ->
   {_,cache,_} = 1..2000
-  |> Enum.reduce({n, Map.new(), []}, fn i, {acc, cache, prev_4} ->
+  |> Enum.reduce({n, Map.new(), {nil,nil,nil,nil}}, fn i, {acc, cache, {p1,p2,p3,_p4}} ->
     n_acc = Funcs.evolve_secret_number(acc)
 
     price = rem(acc, 10)
     n_price = rem(n_acc, 10)
-
-    cond do
-      i < 4 -> {n_acc, cache, [(n_price - price) | prev_4]}
-      i == 4 -> {n_acc, Map.put_new(cache, [(n_price - price) | prev_4], n_price), [(n_price - price) | prev_4]}
-      true ->
-        prev3 = prev_4 |> Enum.reverse() |> tl() |> Enum.reverse() #drop last
-        s =  [(n_price - price) | prev3]
-        {n_acc, Map.put_new(cache, s, n_price), s}
+    diff = n_price - price
+    case i do
+      1 -> {n_acc, cache, {diff,nil,nil,nil}}
+      2 -> {n_acc, cache, {diff,p1,nil,nil}}
+      3 -> {n_acc, cache, {diff,p1,p2,nil}}
+      _ ->
+        ps = {diff,p1,p2,p3}
+        {n_acc, Map.put_new(cache, ps, n_price), ps}
     end
   end)
 
