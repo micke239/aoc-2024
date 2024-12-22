@@ -105,45 +105,5 @@ min_score = path_map[start] |> IO.inspect()
 
 Funcs.find_path4(start, {max_x,max_y}, 2, min_score - 100, path_map) |> Enum.sum() |> IO.inspect()
 Funcs.find_path4(start, {max_x,max_y}, 20, min_score - 100, path_map) |> Enum.sum() |> IO.inspect()
-# |> Enum.map(fn {x,z,y} -> {(min_score - x),{z,y}} end)
-# |> Enum.filter(fn {s,_} -> s > 0 end)
-# |> Enum.group_by(fn {x,_} -> x end)
-# |> IO.inspect()
-# |> Enum.map(fn {x, v} -> {x, Enum.count(v)} end)
-# |> Enum.sort_by(fn {x,v} -> x end)
-# |> IO.inspect()
-# |> Enum.map(fn {_, v} -> v end)
-# |> Enum.sum()
-# |> IO.inspect()
-
-# no_cheat_score = Funcs.find_path2([{start, nil, 0, nil, nil, 0, true}], walls, ending, %{}, 0, Map.new(), nil, {max_x, max_y})[{nil, nil}]
-
-
-# all = Funcs.find_path2([{start, nil, 0, nil,nil, 0, true}], walls, ending, %{}, 1, Map.new(), no_cheat_score - 0, {max_x, max_y})
-
-
-# all
-# |> Enum.map(fn {cp, score} -> {no_cheat_score - score, cp} end)
-# |> Enum.filter(fn {s,_} -> s > 0 end)
-# |> Enum.group_by(fn {x,_} -> x end)
-# |> IO.inspect()
-# |> Enum.map(fn {x, v} -> {x, Enum.count(v)} end)
-# |> IO.inspect()
-# |> Enum.count()
-# |> IO.inspect()
-
-# IO.inspect(no_cheat_score)
-# |> Enum.with_index()
-# |> Enum.map(fn {w,i} ->
-#   IO.inspect(i)
-#   {score,_} = Funcs.find_path2([{start, MapSet.new(), 0}], MapSet.delete(walls, w), ending, %{})
-#   score
-# end)
-# |> Enum.map(fn score -> baseline_score - score end)
-# |> Enum.filter(&(&1 >= 100))
-# |> IO.inspect()
-# |> Enum.count()
-# |> IO.inspect()
-
 
 IO.puts(System.os_time(:millisecond) - start_t)
