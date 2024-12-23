@@ -7,14 +7,14 @@ defmodule Funcs do
   def follow(curr, path, depth, _connections, max_depth) when depth == (max_depth-1) do
     [MapSet.put(path, curr)]
   end
-  def follow(curr, path, depth, connections, _max_depth) do
+  def follow(curr, path, depth, connections, max_depth) do
     n_curr = MapSet.put(path, curr)
     connections[curr]
     |> Enum.filter(fn x ->
       not_friendly = MapSet.difference(path, connections[x])
       MapSet.size(not_friendly) == 0
     end)
-    |> Enum.flat_map(fn x -> Funcs.follow(x,n_curr, depth+1, connections, 3) end)
+    |> Enum.flat_map(fn x -> Funcs.follow(x,n_curr, depth+1, connections, max_depth) end)
     |> Enum.filter(fn r -> r != :not_found end)
     |> Enum.uniq()
   end
